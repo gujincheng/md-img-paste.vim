@@ -18,7 +18,7 @@ function! s:SafeMakeDir()
 	let outdir = g:mdip_imgdir
     endif
     if !isdirectory(outdir)
-        call mkdir(outdir)
+        call mkdir(outdir,"p")
     endif
     if s:os == "Darwin"
         return outdir
@@ -170,9 +170,21 @@ function! mdip#MarkdownClipboardImage()
         let s:os = substitute(system('uname'), '\n', '', '')
     endif
 
+    " 修改源码，获取传入的文件夹和文件名，可以是多级目录
+	let tmpvar = s:InputName()
+	let tmparr = split(tmpvar, '\/')
+    let g:mdip_tmpname = tmparr[-1]
+    let idx = index(tmparr, g:mdip_tmpname) " 判断g:mdip_tmpname是否存在，并获取数组位置
+    call remove(tmparr, idx)
+    let i = 0
+    while i < len(tmparr)
+       let g:mdip_imgdir = g:mdip_imgdir . '/' . tmparr[i]
+       let i += 1
+    endwhile
+	let g:mdip_imgdir_intext = g:mdip_imgdir
+		
     let workdir = s:SafeMakeDir()
     " change temp-file-name and image-name
-    let g:mdip_tmpname = s:InputName()
     if empty(g:mdip_tmpname)
       let g:mdip_tmpname = g:mdip_imgname . '_' . s:RandomName()
     endif
