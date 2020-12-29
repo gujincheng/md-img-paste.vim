@@ -55,7 +55,6 @@ function! s:SaveFileTMPLinux(imgdir, tmpname) abort
         echoerr 'Needs xclip in X11 or wl-clipboard in Wayland.'
         return 1
     endif
-
     let targets = filter(systemlist(system_targets), 'v:val =~# ''image/''')
     if empty(targets) | return 1 | endif
 
@@ -70,7 +69,7 @@ function! s:SaveFileTMPLinux(imgdir, tmpname) abort
     endif
 
     let tmpfile = a:imgdir . '/' . a:tmpname . '.' . extension
-    call system(printf(system_clip, mimetype, tmpfile))
+     call system(printf(system_clip, mimetype, tmpfile))
     return tmpfile
 endfunction
 
@@ -188,7 +187,7 @@ function! mdip#MarkdownClipboardImage()
     if empty(g:mdip_tmpname)
       let g:mdip_tmpname = g:mdip_imgname . '_' . s:RandomName()
     endif
-
+    
     let tmpfile = s:SaveFileTMP(workdir, g:mdip_tmpname)
     if tmpfile == 1
         return
@@ -200,7 +199,7 @@ function! mdip#MarkdownClipboardImage()
         let ipos = getcurpos()
         execute "normal! a" . g:mdip_tmpname[1:] . "](" . relpath . ")"
         call setpos('.', ipos)
-        execute "normal! vt]\<C-g>"
+        execute "normal! mqA;\<esc>`q"
     endif
 endfunction
 
